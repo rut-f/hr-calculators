@@ -11,7 +11,11 @@
             margin: 0;
             padding: 10px;
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
         .calculator-card {
             background: #ffffff;
@@ -70,7 +74,6 @@
             font-weight: bold;
             font-size: 16px;
         }
-        /* התאמת פדינג לשדה עם סימן האחוז בשמאל */
         #jobPercentage {
             padding-left: 30px;
         }
@@ -80,8 +83,8 @@
             padding: 18px;
             border-radius: 8px;
             margin-top: 25px;
-            display: none;
             animation: fadeIn 0.4s ease;
+            display: none;
         }
         .result-line {
             margin-bottom: 10px;
@@ -112,7 +115,7 @@
         .checkbox-container input {
             width: 18px;
             height: 18px;
-            accent-color: #0d9488; /* צבע הטורקיז לתיבת הסימון */
+            accent-color: #0d9488;
         }
         .rate-info {
             font-size: 12px;
@@ -126,6 +129,34 @@
             padding-top: 10px;
             border-top: 1px dashed #99f6e4;
             line-height: 1.4;
+        }
+        /* עיצוב כפתור החזרה החדש */
+        .back-button-container {
+            width: 100%;
+            max-width: 450px;
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        .back-button {
+            background-color: transparent;
+            color: #0f766e;
+            border: 2px solid #0f766e;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .back-button:hover {
+            background-color: #0f766e;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -164,6 +195,12 @@
     </div>
 </div>
 
+<div class="back-button-container">
+    <a href="javascript:history.back()" class="back-button">
+        <span>סיום וחזרה לעמוד הקודם</span> ↩
+    </a>
+</div>
+
 <script>
 function calculateRecovery() {
     const yearsInput = document.getElementById('years').value;
@@ -175,10 +212,8 @@ function calculateRecovery() {
     const daysOutput = document.getElementById('daysOutput');
     const moneyOutput = document.getElementById('moneyOutput');
 
-    // ערך יום קבוע (מגזר ציבורי)
     const dailyRate = 471.4;
 
-    // הגנת קלט - אם שדה הותק ריק, אל תציג תוצאה
     if (yearsInput === "" || yearsInput < 0) {
         resultBox.style.display = "none";
         return;
@@ -186,7 +221,6 @@ function calculateRecovery() {
 
     const years = parseFloat(yearsInput);
     
-    // אם אחוז המשרה ריק או לא תקין בזמן ההקלדה, נתייחס אליו כ-100% לצורך החישוב
     let jobPercentage = parseFloat(percentageInput);
     if (isNaN(jobPercentage) || jobPercentage <= 0) {
         jobPercentage = 100;
@@ -194,7 +228,6 @@ function calculateRecovery() {
 
     let days = 0;
 
-    // הצגת שאלת שירות המדינה רק אם הותק הוא 25 ומעלה
     if (years >= 25) {
         stateServiceContainer.style.display = "flex";
     } else {
@@ -202,7 +235,6 @@ function calculateRecovery() {
         document.getElementById('isStateService').checked = false;
     }
 
-    // קביעת מספר הימים האוטומטי לפי טבלת הוותק שלך
     if (years >= 0 && years <= 3) {
         days = 7;
     } else if (years > 3 && years <= 10) {
@@ -221,10 +253,8 @@ function calculateRecovery() {
         }
     }
 
-    // הנוסחה: ימי ותק X ערך יום X (אחוז משרה חלקי 100)
     const totalMoney = days * dailyRate * (jobPercentage / 100);
 
-    // עדכון הפלט על המסך
     daysOutput.innerText = days;
     moneyOutput.innerText = totalMoney.toLocaleString('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 });
     resultBox.style.display = "block";
